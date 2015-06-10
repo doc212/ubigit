@@ -29,6 +29,9 @@ if not target.is_detached:
     sys.exit(1)
 
 remote=repo.remotes[target.remote_name]
+if trash not in remote.refs:
+    logging.debug("fetch %s from %s", trash, remote)
+    remote.fetch(trash)
 trash=remote.refs[trash]
 
 def fetch(target):
@@ -54,3 +57,6 @@ else:
 refspec=":%s"%target.remote_head
 logging.debug("pushing %s to %s", refspec, remote)
 remote.push(refspec)
+
+logging.debug("removing local ref to %s", trash)
+trash.delete(repo, trash)
