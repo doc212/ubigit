@@ -48,7 +48,6 @@ if len(base) > 0 and base[0] == target.commit:
 else:
     c=git.Commit.create_from_tree(repo, trash.commit.tree, "Trashing %s"%target.remote_head, [trash.commit, target.commit])
     logging.debug("created new commit %s", c)
-    repo.branches.debug.commit=c
 
     refspec="%s:%s"%(c, trash.remote_head)
     logging.debug("pushing %s to %s", refspec, remote)
