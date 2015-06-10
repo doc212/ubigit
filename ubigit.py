@@ -39,13 +39,17 @@ def fetch(target):
 
 fetch(target)
 fetch(trash)
-c=git.Commit.create_from_tree(repo, trash.commit.tree, "Trashing %s"%target.remote_head, [trash.commit, target.commit])
-logging.debug("created new commit %s", c)
-repo.branches.debug.commit=c
+base=repo.merge_base(target, trash)
+if len(base) > 0 and base[0] == target.commit:
+    logging.debug("%s can be fast-forwarded to %s", target, trash)
+else:
+    c=git.Commit.create_from_tree(repo, trash.commit.tree, "Trashing %s"%target.remote_head, [trash.commit, target.commit])
+    logging.debug("created new commit %s", c)
+    repo.branches.debug.commit=c
 
-refspec="%s:%s"%(c, trash.remote_head)
-logging.debug("pushing %s to %s", refspec, remote)
-remote.push(refspec)
+    refspec="%s:%s"%(c, trash.remote_head)
+    logging.debug("pushing %s to %s", refspec, remote)
+    remote.push(refspec)
 
 refspec=":%s"%target.remote_head
 logging.debug("pushing %s to %s", refspec, remote)
