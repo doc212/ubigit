@@ -57,5 +57,9 @@ refspec=":%s"%target.remote_head
 logging.debug("pushing %s to %s", refspec, remote)
 remote.push(refspec)
 
+for b in repo.branches:
+    if b.tracking_branch() == target:
+        logging.debug("unset tracking branch of %s", b)
+        b.set_tracking_branch(None)
 logging.debug("removing local ref to %s", trash)
 trash.delete(repo, trash)
